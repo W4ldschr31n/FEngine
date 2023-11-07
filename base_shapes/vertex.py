@@ -1,5 +1,4 @@
 from OpenGL.GL import *
-
 from numbers import Number
 
 class Vertex:

@@ -1,5 +1,5 @@
 import math
-
+import random
 from base_shapes.triangle import Triangle
 from base_shapes.vertex import Vertex
 
@@ -12,6 +12,7 @@ class Drawable:
     rotation = Vertex(0, 0, 0)
     vertices = tuple()
     triangles = tuple()
+
 
     def __init__(
             self,
@@ -30,6 +31,7 @@ class Drawable:
         self.set_rotation(rotation)
         self.update_vertices()
         self.update_triangles()
+        self.color = Vertex(random.random(), random.random(), random.random())
 
     def set_translation(self, translation):
         self.translation = translation
@@ -106,4 +108,4 @@ class Drawable:
 
     def draw(self):
         for t in self.triangles:
-            t.draw()
+            t.draw(self.color)
