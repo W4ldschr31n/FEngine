@@ -28,3 +28,6 @@ class Vertex:
             return Vertex(self.x*other, self.y*other, self.z*other)
         elif isinstance(other, Vertex):
             return self.x * other.x + self.y * other.y + self.z * other.z
+    
+    def __neg__(self):
+        return Vertex(-self.x, -self.y, -self.z)

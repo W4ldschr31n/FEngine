@@ -3,15 +3,15 @@ from base_shapes.vertex import Vertex
 
 class Square(Drawable):
     base_vertices = (
-        Vertex(-0.5, -0.5, 0),
-        Vertex(-0.5, 0.5, 0),
-        Vertex(0.5, 0.5, 0),
-        Vertex(0.5, -0.5, 0),
+        Vertex(-0.5, -0.5, -0.5),
+        Vertex(-0.5, 0.5, -0.5),
+        Vertex(0.5, 0.5, -0.5),
+        Vertex(0.5, -0.5, -0.5),
 
-        Vertex(-0.5, -0.5, 1),
-        Vertex(-0.5, 0.5, 1),
-        Vertex(0.5, 0.5, 1),
-        Vertex(0.5, -0.5, 1),
+        Vertex(-0.5, -0.5, 0.5),
+        Vertex(-0.5, 0.5, 0.5),
+        Vertex(0.5, 0.5, 0.5),
+        Vertex(0.5, -0.5, 0.5),
     )
     
     triangle_edges = (

@@ -4,7 +4,6 @@ from OpenGL.GLU import *
 from base_shapes.drawable import Drawable
 from base_shapes.diamond import Diamond
 from base_shapes.square import Square
-from base_shapes.triangle import Triangle
 from base_shapes.vertex import Vertex
 
 display = (640, 480)
@@ -28,16 +27,25 @@ class App:
                 # Handle exit signal
                 if event.type == pg.QUIT:
                     running = False
-                # Handle scale and translate
                 if event.type == pg.KEYDOWN:
+                    # Scale elements
                     if event.key == pg.K_KP_PLUS:
                         scale = 0.1
                     elif event.key == pg.K_KP_MINUS:
                         scale = -0.1
+                    # Reset camera
                     if event.key == pg.K_KP_5:
                         self.reset_view()
-            # Handle rotations
+                    # Reset elements
+                    if event.key == pg.K_KP_0:
+                        for e in self.elements:
+                            e.reset_vertices()
+                    if event.key == pg.K_r:
+                        self.elements[0].reset_position()
+                    if event.key == pg.K_f:
+                        self.elements[0].reset_transformations()
             keys = pg.key.get_pressed()
+            # Camera rotation
             rot_x, rot_y, rot_z = 0, 0, 0
             if keys[pg.K_KP_4]:
                 rot_y = -5
@@ -53,6 +61,22 @@ class App:
                 rot_z = -5
             if any ([rot_x, rot_y, rot_z]):
                 glRotatef(1, rot_x, rot_y, rot_z)
+            # Rotate element
+            rot_x, rot_y, rot_z = 0, 0, 0
+            if keys[pg.K_a]:
+                rot_x = 1
+            elif keys[pg.K_q]:
+                rot_x = -1
+            if keys[pg.K_z]:
+                rot_y = 1
+            elif keys[pg.K_s]:
+                rot_y = -1
+            if keys[pg.K_e]:
+                rot_z = 1
+            elif keys[pg.K_d]:
+                rot_z = -1
+            if any([rot_x, rot_y, rot_z]):
+                self.elements[0].add_rotation(rot_x, rot_y, rot_z)
 
             # Refresh screen
             glClear(GL_COLOR_BUFFER_BIT)
@@ -94,9 +118,9 @@ if __name__=="__main__":
         )
     )
     elements = [
-        custom_el,
         Square(scale=0.4, origin=Vertex(-1, 0, 0)),
         Square(scale=0.4, origin=Vertex(1, 0, 0)),
+        custom_el,
         Diamond(scale=0.4, origin=Vertex(0, 1, 0)),
         Diamond(scale=0.4, origin=Vertex(0, -1, 0)),
     ]
