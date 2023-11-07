@@ -48,35 +48,51 @@ class App:
             # Camera rotation
             rot_x, rot_y, rot_z = 0, 0, 0
             if keys[pg.K_KP_4]:
-                rot_y = -5
-            elif keys[pg.K_KP_6]:
                 rot_y = 5
+            elif keys[pg.K_KP_6]:
+                rot_y = -5
             if keys[pg.K_KP_8]:
-                rot_x = -5
-            elif keys[pg.K_KP_2]:
                 rot_x = 5
+            elif keys[pg.K_KP_2]:
+                rot_x = -5
             if keys[pg.K_KP_7]:
-                rot_z = 5
-            elif keys[pg.K_KP_9]:
                 rot_z = -5
+            elif keys[pg.K_KP_9]:
+                rot_z = 5
             if any ([rot_x, rot_y, rot_z]):
                 glRotatef(1, rot_x, rot_y, rot_z)
             # Rotate element
             rot_x, rot_y, rot_z = 0, 0, 0
-            if keys[pg.K_a]:
-                rot_x = 1
-            elif keys[pg.K_q]:
-                rot_x = -1
-            if keys[pg.K_z]:
+            if keys[pg.K_q]:
                 rot_y = 1
-            elif keys[pg.K_s]:
+            elif keys[pg.K_d]:
                 rot_y = -1
+            if keys[pg.K_z]:
+                rot_x = 1
+            elif keys[pg.K_s]:
+                rot_x = -1
+            if keys[pg.K_a]:
+                rot_z = -1
             if keys[pg.K_e]:
                 rot_z = 1
-            elif keys[pg.K_d]:
-                rot_z = -1
             if any([rot_x, rot_y, rot_z]):
                 self.elements[0].add_rotation(rot_x, rot_y, rot_z)
+            # Move element
+            trans_x, trans_y, trans_z = 0, 0, 0
+            if keys[pg.K_j]:
+                trans_x = -0.1
+            elif keys[pg.K_l]:
+                trans_x = 0.1
+            if keys[pg.K_i]:
+                trans_y = 0.1
+            elif keys[pg.K_k]:
+                trans_y = -0.1
+            if keys[pg.K_u]:
+                trans_z = 0.1
+            if keys[pg.K_o]:
+                trans_z = -0.1
+            if any([trans_x, trans_y, trans_z]):
+                self.elements[0].add_translation(trans_x, trans_y, trans_z)
 
             # Refresh screen
             glClear(GL_COLOR_BUFFER_BIT)

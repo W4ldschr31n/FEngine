@@ -6,20 +6,36 @@ from base_shapes.vertex import Vertex
 class Drawable:
     base_vertices = tuple()
     triangle_edges = tuple()
+    translation = Vertex(0, 0, 0)
     scale = 1
     origin = Vertex(0, 0, 0)
     rotation = Vertex(0, 0, 0)
     vertices = tuple()
     triangles = tuple()
 
-    def __init__(self, base_vertices=tuple(), triangle_edges=tuple(), scale=1, origin=Vertex(0, 0, 0), rotation=Vertex(0, 0, 0)):
+    def __init__(
+            self,
+            base_vertices=tuple(),
+            triangle_edges=tuple(),
+            translation=Vertex(0, 0, 0),
+            scale=1,
+            origin=Vertex(0, 0, 0),
+            rotation=Vertex(0, 0, 0),
+        ):
         self.base_vertices = base_vertices or self.base_vertices
         self.triangle_edges = triangle_edges or self.triangle_edges
+        self.set_translation(translation)
         self.set_scale(scale)
         self.set_origin(origin)
         self.set_rotation(rotation)
         self.update_vertices()
         self.update_triangles()
+
+    def set_translation(self, translation):
+        self.translation = translation
+
+    def add_translation(self, x, y, z):
+        self.translation += Vertex(x, y, z)
 
     def set_scale(self, number):
         self.scale = number
@@ -36,7 +52,7 @@ class Drawable:
     def update_vertices(self):
         # Resize, translate and rotate
         self.vertices = tuple(
-            self.rotate_vertex(v) * self.scale + self.origin for v in self.base_vertices
+            self.rotate_vertex(v) * self.scale + self.origin + self.translation for v in self.base_vertices
         )
     
     def rotate_vertex(self, vertex):
@@ -70,12 +86,13 @@ class Drawable:
 
     def reset_vertices(self):
         self.vertices = self.base_vertices
+        self.translation = Vertex(0, 0, 0)
         self.scale = 1
         self.origin = Vertex(0, 0, 0)
         self.rotation = Vertex(0, 0, 0)
     
     def reset_position(self):
-        self.origin = Vertex(0, 0, 0)
+        self.translation = Vertex(0, 0, 0)
     
     def reset_transformations(self):
         self.scale = 1
