@@ -6,9 +6,6 @@ class Vertex:
         self.x = x
         self.y = y
         self.z = z
-    
-    def draw(self):
-        glVertex3d(self.x, self.y, self.z)
 
     def __add__(self, other):
         if isinstance(other, Number):
