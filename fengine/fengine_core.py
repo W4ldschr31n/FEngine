@@ -5,6 +5,7 @@ from base_shapes.drawable import Drawable
 from base_shapes.triangle import Triangle
 from base_shapes.vertex import Vertex
 from fengine import fengine_utility
+from fengine.animation_player import Animation, AnimationPlayer
 
 class FEngineCore:
     def __init__(self, display, color_chaos_mode=False, fill_triangles_mode=False):
@@ -12,6 +13,7 @@ class FEngineCore:
         self.color_chaos_mode = color_chaos_mode
         self.fill_triangles_mode = fill_triangles_mode
         self.elements = []
+        self.animation_player = AnimationPlayer()
     
     def start(self):
         glClearColor(0.2, 0.2, 0.3, 1)
@@ -35,6 +37,8 @@ class FEngineCore:
     def draw_next(self):
         # Refresh screen
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        # Animate
+        self.animation_player.play_step()
         # Update elements that changed since last draw
         for element in self.elements:
             fengine_utility.update_element_if_needed(element)
@@ -69,3 +73,6 @@ class FEngineCore:
         if self.color_chaos_mode:
             glColor3f((vertex.x+1)/2, (vertex.y+1)/2, (vertex.z+1)/2)
         glVertex3d(vertex.x, vertex.y, vertex.z)
+
+    def play_animation(self, i, ani_type):
+        self.animation_player.start_animation(Animation(ani_type, self.elements[i]))

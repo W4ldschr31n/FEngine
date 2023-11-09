@@ -3,6 +3,7 @@ from base_shapes.drawable import Drawable
 from base_shapes.diamond import Diamond
 from base_shapes.square import Square
 from base_shapes.vertex import Vertex
+from fengine.animation_player import ANIMATION_TYPE_MOVE, ANIMATION_TYPE_ROTATE
 from fengine.fengine_core import FEngineCore
 
 display = (640, 480)
@@ -44,6 +45,11 @@ class App:
                         self.fengine.elements[0].reset_position()
                     if event.key == pg.K_f:
                         self.fengine.elements[0].reset_transformations()
+                    # Animate element
+                    if event.key == pg.K_KP_1:
+                        self.fengine.play_animation(0, ANIMATION_TYPE_MOVE)
+                    elif event.key == pg.K_KP_3:
+                        self.fengine.play_animation(0, ANIMATION_TYPE_ROTATE)
             keys = pg.key.get_pressed()
             # Camera rotation
             rot_x, rot_y, rot_z = 0, 0, 0
@@ -93,6 +99,7 @@ class App:
                 trans_z = -0.1
             if any([trans_x, trans_y, trans_z]):
                 self.fengine.elements[0].add_translation(trans_x, trans_y, trans_z)
+            
 
             self.fengine.draw_next()
             pg.display.flip()
