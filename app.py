@@ -1,6 +1,4 @@
 import pygame as pg
-from OpenGL.GL import *
-from OpenGL.GLU import *
 from base_shapes.drawable import Drawable
 from base_shapes.diamond import Diamond
 from base_shapes.square import Square
@@ -12,9 +10,9 @@ display = (640, 480)
 class App:
     def __init__(self, elements):
         pg.init()
-        pg.display.set_mode(display, pg.OPENGL|pg.DOUBLEBUF)
+        pg.display.set_mode(display, pg.OPENGL|pg.DOUBLEBUF|pg.GL_DEPTH_SIZE)
         self.clock = pg.time.Clock()
-        self.fengine = FEngineCore(display)
+        self.fengine = FEngineCore(display, False, True)
         self.fengine.elements = elements
         self.main()
 

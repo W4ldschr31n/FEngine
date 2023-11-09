@@ -7,14 +7,19 @@ from base_shapes.vertex import Vertex
 from fengine import fengine_utility
 
 class FEngineCore:
-    def __init__(self, display):
+    def __init__(self, display, color_chaos_mode=False, fill_triangles_mode=False):
         self.display = display
+        self.color_chaos_mode = color_chaos_mode
+        self.fill_triangles_mode = fill_triangles_mode
         self.elements = []
-        self.color_chaos_mode = True
-        self.fill_triangles_mode = False
     
     def start(self):
         glClearColor(0.2, 0.2, 0.3, 1)
+        glClearDepth(1.0)
+        glDepthMask(GL_TRUE)
+        glDepthFunc(GL_LESS)
+        glEnable(GL_DEPTH_TEST)
+        glDepthRange(0.0, 1.0)
         self.reset_view()
     
     def reset_view(self):
@@ -26,9 +31,9 @@ class FEngineCore:
     def rotate_view(self, rot_x, rot_y, rot_z):
         glRotatef(1, rot_x, rot_y, rot_z)
 
-    # Refresh screen
     def draw_next(self):
-        glClear(GL_COLOR_BUFFER_BIT)
+        # Refresh screen
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         # Update elements that changed since last draw
         for element in self.elements:
             fengine_utility.update_element_if_needed(element)
@@ -39,7 +44,7 @@ class FEngineCore:
     def draw_element(self, element: Drawable):
         if isinstance(element, Drawable):
             for t in element.triangles:
-                self.draw_triangle(t)
+                self.draw_triangle(t, element.color)
     
     def draw_triangle(self, triangle: Triangle, color=Vertex(255, 255, 255)):
         glColor3f(color.x, color.y, color.z)
