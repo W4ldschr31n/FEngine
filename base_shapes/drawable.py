@@ -29,6 +29,7 @@ class Drawable:
             scale=1,
             origin=Vertex(0, 0, 0),
             rotation=Vertex(0, 0, 0),
+            color=None,
         ):
         self.base_vertices = base_vertices or self.base_vertices
         self.triangle_edges = triangle_edges or self.triangle_edges
@@ -37,7 +38,9 @@ class Drawable:
         self.set_origin(origin)
         self.set_rotation(rotation)
         self.needs_update = True
-        self.color = Vertex(random.random(), random.random(), random.random())
+        if color is None:
+            color = Vertex(random.random(), random.random(), random.random())
+        self.color = color
 
     @needs_update_wrapper
     def set_translation(self, translation):
@@ -83,3 +86,6 @@ class Drawable:
     def reset_transformations(self):
         self.scale = 1
         self.rotation = Vertex(0, 0, 0)
+
+    def get_copy(self):
+        return Drawable(self.base_vertices, self.triangle_edges, self.translation, self.scale, self.origin, self.rotation, self.color)

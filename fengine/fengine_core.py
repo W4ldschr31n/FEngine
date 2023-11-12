@@ -14,6 +14,7 @@ class FEngineCore:
         self.fill_triangles_mode = fill_triangles_mode
         self.elements = []
         self.animation_player = AnimationPlayer()
+        self.focused_element = None
     
     def start(self):
         glClearColor(0.2, 0.2, 0.3, 1)
@@ -22,6 +23,8 @@ class FEngineCore:
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
         glDepthRange(0.0, 1.0)
+        glEnable(GL_STENCIL_TEST)
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE)
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); 
         self.reset_view()
     
@@ -36,20 +39,23 @@ class FEngineCore:
 
     def draw_next(self):
         # Refresh screen
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT)
         # Animate
         self.animation_player.play_step()
         # Update elements that changed since last draw
         for element in self.elements:
             fengine_utility.update_element_if_needed(element)
+        if self.focused_element is not None:
+            fengine_utility.update_element_if_needed(self.focused_element)
         # Draw all elements
+        if self.focused_element is not None:
+            self.draw_element_with_outline(self.focused_element)
         for element in self.elements:
             self.draw_element(element)
     
     def draw_element(self, element: Drawable):
-        if isinstance(element, Drawable):
-            for t in element.triangles:
-                self.draw_triangle(t, element.color)
+        for t in element.triangles:
+            self.draw_triangle(t, element.color)
     
     def draw_triangle(self, triangle: Triangle, color=Vertex(255, 255, 255)):
         glColor3f(color.x, color.y, color.z)
@@ -76,3 +82,45 @@ class FEngineCore:
 
     def play_animation(self, i, ani_type):
         self.animation_player.start_animation(Animation(ani_type, self.elements[i]))
+    
+    def add_element(self, element):
+        self.elements.append(element)
+
+    def remove_focused_element(self):
+        self.focused_element = None
+
+    def focus_element(self, index):
+        if 0 <= index < len(self.elements):
+            if self.focused_element is not None:
+                self.elements.append(self.focused_element)
+            self.focused_element = self.elements.pop(index)
+    
+    def focus_next_element(self):
+        self.focus_element(0)
+
+    def focus_previous_element(self):
+        self.focus_element(len(self.elements)-1)
+    
+    def unfocus_element(self):
+        if self.focused_element is not None:
+            self.elements.append(self.focused_element)
+            self.focused_element = None
+
+    def draw_element_with_outline(self, element):
+        highlighted_copy = element.get_copy()
+        highlighted_copy.add_scale(0.1)
+        highlighted_copy.color = Vertex(1,1,1)
+        fengine_utility.update_element_if_needed(highlighted_copy)
+
+        glStencilFunc(GL_ALWAYS, 1, 0xFF)
+        glStencilMask(0xFF)
+        self.draw_element(element)
+
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF)
+        glStencilMask(0x00)
+        glDisable(GL_DEPTH_TEST)
+        self.draw_element(highlighted_copy)
+
+        glStencilFunc(GL_ALWAYS, 0, 0xFF)
+        glStencilMask(0xFF)
+        glEnable(GL_DEPTH_TEST)
