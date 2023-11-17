@@ -4,12 +4,12 @@ from base_shapes.vertex import Vertex
 
 class Diamond(Drawable):
     base_vertices = (
-        Vertex(-0.5, 0, 0),
-        Vertex(-0.5, 0, 1),
-        Vertex(0.5, 0, 1),
-        Vertex(0.5, 0, 0),
-        Vertex(0, 1, 0.5),
-        Vertex(0, -1, 0.5),
+        Vertex(-0.5, 0, -0.5),
+        Vertex(-0.5, 0, 0.5),
+        Vertex(0.5, 0, 0.5),
+        Vertex(0.5, 0, -0.5),
+        Vertex(0, 1, 0),
+        Vertex(0, -1, 0),
     )
     
     triangle_edges = (

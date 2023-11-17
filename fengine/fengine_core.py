@@ -6,15 +6,15 @@ from base_shapes.triangle import Triangle
 from base_shapes.vertex import Vertex
 from fengine import fengine_utility
 from fengine.animation_player import Animation, AnimationPlayer
+from fengine.drawer import Drawer
 
 class FEngineCore:
     def __init__(self, display, color_chaos_mode=False, fill_triangles_mode=False):
         self.display = display
         self.color_chaos_mode = color_chaos_mode
         self.fill_triangles_mode = fill_triangles_mode
-        self.elements = []
         self.animation_player = AnimationPlayer()
-        self.focused_element = None
+        self.drawer = Drawer()
     
     def start(self):
         glClearColor(0.2, 0.2, 0.3, 1)
@@ -45,12 +45,11 @@ class FEngineCore:
         # Update elements that changed since last draw
         for element in self.elements:
             fengine_utility.update_element_if_needed(element)
-        if self.focused_element is not None:
-            fengine_utility.update_element_if_needed(self.focused_element)
         # Draw all elements
-        if self.focused_element is not None:
-            self.draw_element_with_outline(self.focused_element)
-        for element in self.elements:
+        focused_element = self.get_focused_element()
+        if focused_element is not None:
+            self.draw_element_with_outline(focused_element)
+        for element in self.drawer.get_non_focused_elements():
             self.draw_element(element)
     
     def draw_element(self, element: Drawable):
@@ -81,31 +80,36 @@ class FEngineCore:
         glVertex3d(vertex.x, vertex.y, vertex.z)
 
     def play_animation(self, i, ani_type):
-        self.animation_player.start_animation(Animation(ani_type, self.elements[i]))
+        self.animation_player.start_animation(Animation(ani_type, self.get_focused_element()))
     
+    @property
+    def elements(self):
+        return self.drawer.elements
+
+    def get_focused_element(self):
+        return self.drawer.get_focused_element()
+
     def add_element(self, element):
-        self.elements.append(element)
+        return self.drawer.add_element(element)
+    
+    def add_all_elements(self, elements):
+        return self.drawer.add_all_elements(elements)
 
-    def remove_focused_element(self):
-        self.focused_element = None
+    def delete_focused_element(self):
+        return self.drawer.delete_focused_element()
 
-    def focus_element(self, index):
-        if 0 <= index < len(self.elements):
-            if self.focused_element is not None:
-                self.elements.append(self.focused_element)
-            self.focused_element = self.elements.pop(index)
+    def set_focused_element(self, index):
+        return self.drawer.set_focused_element(index)
     
     def focus_next_element(self):
-        self.focus_element(0)
+        return self.drawer.focus_next_element()
 
     def focus_previous_element(self):
-        self.focus_element(len(self.elements)-1)
+        return self.drawer.focus_previous_element()
     
     def unfocus_element(self):
-        if self.focused_element is not None:
-            self.elements.append(self.focused_element)
-            self.focused_element = None
-
+        return self.drawer.unfocus_element()
+        
     def draw_element_with_outline(self, element):
         highlighted_copy = element.get_copy()
         highlighted_copy.add_scale(0.1)
@@ -118,7 +122,7 @@ class FEngineCore:
 
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF)
         glStencilMask(0x00)
-        glDisable(GL_DEPTH_TEST)
+        # glDisable(GL_DEPTH_TEST)
         self.draw_element(highlighted_copy)
 
         glStencilFunc(GL_ALWAYS, 0, 0xFF)
